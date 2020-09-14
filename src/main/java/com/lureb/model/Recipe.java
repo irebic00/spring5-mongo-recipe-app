@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = {"image", "ingredients", "categories", "notes"})
+@Document
 public class Recipe {
+
+    @Id
     private String id;
 
     private String description;
@@ -31,6 +37,7 @@ public class Recipe {
     private Byte[] image;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="id")
+    @DBRef
     private Set<Category> categories = new HashSet<>();
 
     @JsonManagedReference
@@ -38,11 +45,9 @@ public class Recipe {
 
     public void setNotes(Notes notes) {
         this.notes = notes;
-        notes.setRecipe(this);
     }
 
     public Recipe addIngredient(Ingredient ingredient) {
-        ingredient.setRecipe(this);
         this.getIngredients().add(ingredient);
         return this;
     }
@@ -51,7 +56,6 @@ public class Recipe {
         if (category == null) {
             return null;
         }
-        category.getRecipes().add(this);
         this.getCategories().add(category);
         return this;
     }
