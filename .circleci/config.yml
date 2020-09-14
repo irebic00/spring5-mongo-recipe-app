@@ -15,7 +15,7 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
-      CODECOV_TOKEN: "e40eac21-f4da-4600-bd61-3a379874f8e4"
+      CODECOV_TOKEN: "fd4c8b38-bdaf-41dc-93bb-e48f61ca03ba"
 
     steps:
       - checkout
