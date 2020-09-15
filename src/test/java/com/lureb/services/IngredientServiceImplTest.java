@@ -4,7 +4,6 @@ import com.lureb.commands.IngredientCommand;
 import com.lureb.converter.ModelConverter;
 import com.lureb.model.Ingredient;
 import com.lureb.model.Recipe;
-import com.lureb.repositories.IngredientRepository;
 import com.lureb.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +20,6 @@ public class IngredientServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
-    @Mock
-    IngredientRepository ingredientRepository;
-
     ModelConverter modelConverter;
 
     IngredientService ingredientService;
@@ -32,7 +28,7 @@ public class IngredientServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         modelConverter = new ModelConverter();
-        ingredientService = new IngredientServiceImpl(recipeRepository, ingredientRepository, modelConverter);
+        ingredientService = new IngredientServiceImpl(recipeRepository, modelConverter);
     }
 
     @Test
@@ -115,6 +111,5 @@ public class IngredientServiceImplTest {
         //then
         Mockito.verify(recipeRepository, Mockito.times(1)).save(Mockito.any());
         Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
-        Mockito.verify(ingredientRepository, Mockito.times(1)).delete(Mockito.any());
     }
 }

@@ -86,8 +86,7 @@
                                 <h5>URL:</h5>
                             </div>
                             <div class="col-md-3">
-                                <!-- TODO: enforce use of prefix http or https -->
-                                <p><a href="#" th:text="${recipe.source}" th:href="'https://' + ${recipe.url}">http://www.example.com</a></p>
+                                <p><a href="#" th:text="${recipe.source}" th:href="${recipe.url}">http://www.example.com</a></p>
                             </div>
                         </div>
                     </div>

@@ -23,7 +23,8 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
     private final RecipeRepository recipeRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
 
-    public DataLoader(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
+    public DataLoader(CategoryRepository categoryRepository, RecipeRepository recipeRepository,
+                      UnitOfMeasureRepository unitOfMeasureRepository) {
         this.categoryRepository = categoryRepository;
         this.recipeRepository = recipeRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
@@ -33,9 +34,9 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
         List<Recipe> recipes = new ArrayList<>();
 
-        Category mexican = categoryRepository.findByDescription("Mexican").orElse(null);
+        Category mexican = categoryRepository.findByDescription("Mexican").orElseThrow(() -> new RuntimeException("Category mexican not provisioned"));
         log.info("Saved category: {}", mexican);
-        Category fastFood = categoryRepository.findByDescription("Fast Food").orElse(null);
+        Category fastFood = categoryRepository.findByDescription("Fast Food").orElseThrow(() -> new RuntimeException("Category fastFood not provisioned"));
         log.info("Saved category: {}", fastFood);
 
         Notes perfectGuacamoleNotes = new Notes();
@@ -48,6 +49,8 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
         Recipe perfectGuacamole = new Recipe();
         perfectGuacamole.addCategory(mexican);
+        mexican.addRecipe(perfectGuacamole);
+        categoryRepository.save(mexican);
         perfectGuacamole.setCookTime(10);
         perfectGuacamole.setPrepTime(5);
         perfectGuacamole.setDescription("Traditional Mexican dish.");
@@ -55,7 +58,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         perfectGuacamole.setDirections("Just cook it");
         perfectGuacamole.setServings(2);
         perfectGuacamole.setSource("Coolinarika");
-        perfectGuacamole.setUrl("www.coolinarika.hr");
+        perfectGuacamole.setUrl("http://www.coolinarika.hr");
         perfectGuacamole.setNotes(perfectGuacamoleNotes);
         perfectGuacamole.addIngredient(ingredient1);
         log.info("Saved recipe: {}", perfectGuacamole);
@@ -70,6 +73,8 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         spicyGrilledChickenTacosNotes.setRecipeNotes("Kind off Easy to cook");
         Recipe spicyGrilledChickenTacos = new Recipe();
         spicyGrilledChickenTacos.addCategory(fastFood);
+        fastFood.addRecipe(spicyGrilledChickenTacos);
+        categoryRepository.save(fastFood);
         spicyGrilledChickenTacos.setCookTime(120);
         spicyGrilledChickenTacos.setPrepTime(15);
         spicyGrilledChickenTacos.setDescription("Super hot chick.");
@@ -77,7 +82,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         spicyGrilledChickenTacos.setDirections("Just cook it");
         spicyGrilledChickenTacos.setServings(5);
         spicyGrilledChickenTacos.setSource("Coolinarika");
-        spicyGrilledChickenTacos.setUrl("www.coolinarika.hr");
+        spicyGrilledChickenTacos.setUrl("http://www.coolinarika.hr");
         spicyGrilledChickenTacos.setNotes(spicyGrilledChickenTacosNotes);
         spicyGrilledChickenTacos.addIngredient(ingredient2);
         log.info("Saved recipe: {}", spicyGrilledChickenTacos);

@@ -1,10 +1,9 @@
 package com.lureb.services;
 
-import com.lureb.exception.NotFoundException;
-import com.lureb.repositories.IngredientRepository;
 import com.lureb.commands.IngredientCommand;
 import com.lureb.commands.RecipeCommand;
 import com.lureb.converter.ModelConverter;
+import com.lureb.exception.NotFoundException;
 import com.lureb.model.Ingredient;
 import com.lureb.model.Recipe;
 import com.lureb.repositories.RecipeRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,13 +18,10 @@ public class IngredientServiceImpl implements IngredientService {
 
     private final RecipeRepository recipeRepository;
 
-    private final IngredientRepository ingredientRepository;
-
     private final ModelConverter modelConverter;
 
-    public IngredientServiceImpl(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, ModelConverter modelConverter) {
+    public IngredientServiceImpl(RecipeRepository recipeRepository, ModelConverter modelConverter) {
         this.recipeRepository = recipeRepository;
-        this.ingredientRepository = ingredientRepository;
         this.modelConverter = modelConverter;
     }
 
@@ -60,10 +55,9 @@ public class IngredientServiceImpl implements IngredientService {
         }
         Recipe recipe = recipeOptional.get();
 
-        Set<Ingredient> ingredients = recipe.getIngredients();
+        List<Ingredient> ingredients = recipe.getIngredients();
         if (ingredients.stream().noneMatch(ingredient -> ingredient.getId().equals(ingredientCommand.getId()))) {
             Ingredient newIngredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
-            newIngredient.setRecipe(recipe);
             recipe.addIngredient(newIngredient);
             recipeRepository.save(recipe);
             ingredientCommand.setId(newIngredient.getId());
@@ -81,7 +75,6 @@ public class IngredientServiceImpl implements IngredientService {
         recipe.getIngredients().remove(selectedIngredient.get(0));
 
         Ingredient newIngredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
-        newIngredient.setRecipe(recipe);
         recipe.getIngredients().add(newIngredient);
         recipeRepository.save(recipe);
 
@@ -99,7 +92,6 @@ public class IngredientServiceImpl implements IngredientService {
                 .orElseThrow(() -> new NotFoundException("Ingredient not found"));
 
         recipe.getIngredients().remove(ingredient);
-        ingredientRepository.delete(ingredient);
         recipeRepository.save(recipe);
     }
 }

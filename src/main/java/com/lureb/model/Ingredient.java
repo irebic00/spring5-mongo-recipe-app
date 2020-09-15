@@ -1,6 +1,5 @@
 package com.lureb.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,20 +8,21 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(exclude = {"recipe"})
-@ToString(exclude = {"uom", "recipe"})
 @Document
+@EqualsAndHashCode
+@ToString(exclude = {"uom"})
 public class Ingredient {
+
     @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
+
     private String description;
     private BigDecimal amount;
-    private UnitOfMeasure uom;
 
-    @JsonBackReference
     @DBRef
-    private Recipe recipe;
+    private UnitOfMeasure uom;
 
 }

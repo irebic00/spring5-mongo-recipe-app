@@ -46,7 +46,8 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeCommand findRecipeCommandById(String id) {
-        return modelConverter.convertValue(recipeRepository.findById(id).orElse(null), RecipeCommand.class);
+        Recipe recipe = recipeRepository.findById(id).orElse(null);
+        return modelConverter.convertValue(recipe, RecipeCommand.class);
     }
 
     @Override

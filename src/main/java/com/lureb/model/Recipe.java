@@ -1,22 +1,19 @@
 package com.lureb.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
+@Document
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = {"image", "ingredients", "categories", "notes"})
-@Document
 public class Recipe {
 
     @Id
@@ -28,24 +25,17 @@ public class Recipe {
     private Integer servings;
     private String source;
     private String url;
+
     private String directions;
     private Difficulty difficulty;
-
-    @JsonManagedReference
-    private Set<Ingredient> ingredients = new HashSet<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     private Byte[] image;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="id")
     @DBRef
-    private Set<Category> categories = new HashSet<>();
+    private List<Category> categories = new ArrayList<>();
 
-    @JsonManagedReference
     private Notes notes;
-
-    public void setNotes(Notes notes) {
-        this.notes = notes;
-    }
 
     public Recipe addIngredient(Ingredient ingredient) {
         this.getIngredients().add(ingredient);

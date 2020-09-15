@@ -10,5 +10,5 @@ import lombok.Setter;
 public class NotesCommand {
     private String id;
     private String recipeNotes;
-
+    private RecipeCommand recipe;
 }
