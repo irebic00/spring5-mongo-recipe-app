@@ -2,6 +2,7 @@ package com.lureb.controllers;
 
 import com.lureb.commands.IngredientCommand;
 import com.lureb.commands.RecipeCommand;
+import com.lureb.commands.UnitOfMeasureCommand;
 import com.lureb.services.IngredientService;
 import com.lureb.services.RecipeService;
 import com.lureb.services.UnitOfMeasureService;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import reactor.core.publisher.Flux;
 
 import java.util.HashSet;
 
@@ -79,7 +81,7 @@ public class IngredientControllerTest {
 
         //when
         Mockito.when(ingredientService.findByRecipeIdAndIngredientId(Mockito.anyString(), Mockito.anyString())).thenReturn(ingredientCommand);
-        Mockito.when(unitOfMeasureService.listAllUoms()).thenReturn(new HashSet<>());
+        Mockito.when(unitOfMeasureService.listAllUoms()).thenReturn(Flux.just(new UnitOfMeasureCommand()));
 
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/ingredients/2/update"))
@@ -118,7 +120,7 @@ public class IngredientControllerTest {
 
         //when
         Mockito.when(recipeService.findRecipeCommandById(Mockito.anyString())).thenReturn(recipeCommand);
-        Mockito.when(unitOfMeasureService.listAllUoms()).thenReturn(new HashSet<>());
+        Mockito.when(unitOfMeasureService.listAllUoms()).thenReturn(Flux.just(new UnitOfMeasureCommand()));
 
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/ingredients/new"))
