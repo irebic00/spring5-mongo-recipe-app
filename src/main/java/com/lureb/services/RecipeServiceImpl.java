@@ -1,8 +1,8 @@
 package com.lureb.services;
 
-import com.lureb.exception.NotFoundException;
 import com.lureb.commands.RecipeCommand;
 import com.lureb.converter.ModelConverter;
+import com.lureb.exception.NotFoundException;
 import com.lureb.model.Recipe;
 import com.lureb.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
