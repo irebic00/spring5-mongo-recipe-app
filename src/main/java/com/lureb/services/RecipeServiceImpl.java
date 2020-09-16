@@ -41,6 +41,9 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     // @Transactional only on SQL dbs, no need for mongo (javax.transaction.Transactional)
     public RecipeCommand saveRecipeCommand(RecipeCommand command) {
+        if (command.getId().isEmpty()) {
+            command.setId(new ObjectId().toString());
+        }
         Recipe detachedRecipe = modelConverter.convertValue(command, Recipe.class);
         return modelConverter.convertValue(recipeRepository.save(detachedRecipe), RecipeCommand.class);
     }

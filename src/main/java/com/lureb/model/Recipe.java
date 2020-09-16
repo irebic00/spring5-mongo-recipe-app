@@ -1,7 +1,10 @@
 package com.lureb.model;
 
 import com.lureb.exception.NotFoundException;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -41,6 +44,7 @@ public class Recipe {
     }
 
     public Recipe addIngredient(Ingredient ingredient) {
+        ingredient.setRecipeId(id.toString());
         this.getIngredients().add(ingredient);
         return this;
     }

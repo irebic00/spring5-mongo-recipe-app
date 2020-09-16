@@ -13,9 +13,8 @@ public class ModelConverter {
     public ModelConverter() {
         this.objectMapper = new ObjectMapper()
                 .registerModule(new SimpleModule()
-                        .addDeserializer(String.class, new ObjectIdToStringDeserializer()))
-                .registerModule(new SimpleModule()
-                        .addDeserializer(ObjectId.class, new StringToObjectIdDeserializer()));
+                        .addDeserializer(String.class, new ObjectIdToStringDeserializer())
+                        .addSerializer(ObjectId.class, new StringToObjectIdSerializer()));
     }
 
     public <T> T convertValue(Object fromValue, Class<T> toValueType) throws IllegalArgumentException {

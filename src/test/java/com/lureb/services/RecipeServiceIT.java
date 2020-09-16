@@ -4,7 +4,6 @@ import com.lureb.commands.RecipeCommand;
 import com.lureb.converter.ModelConverter;
 import com.lureb.model.Recipe;
 import com.lureb.repositories.RecipeRepository;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,21 +27,20 @@ public class RecipeServiceIT {
     @Autowired
     ModelConverter modelConverter;
 
-//    @Test
-//    public void testSaveOfDescription() {
-//        //given
-//        Iterable<Recipe> recipes = recipeRepository.findAll();
-//        Recipe testRecipe = recipes.iterator().next();
-//        RecipeCommand testRecipeCommand = modelConverter.convertValue(testRecipe, RecipeCommand.class);
-//
-//        //when
-//        testRecipeCommand.setDescription(NEW_DESCRIPTION);
-//        RecipeCommand savedRecipeCommand = recipeService.saveRecipeCommand(testRecipeCommand);
-//
-//        //then
-//        assertEquals(NEW_DESCRIPTION, savedRecipeCommand.getDescription());
-//        assertEquals(testRecipe.getId(), savedRecipeCommand.getId());
-//        assertEquals(testRecipe.getCategories().size(), savedRecipeCommand.getCategories().size());
-//        assertEquals(testRecipe.getIngredients().size(), savedRecipeCommand.getIngredients().size());
-//    }
+    @Test
+    public void testSaveOfDescription() {
+        //given
+        Recipe testRecipe = recipeRepository.findAll().iterator().next();
+        RecipeCommand testRecipeCommand = modelConverter.convertValue(testRecipe, RecipeCommand.class);
+
+        //when
+        testRecipeCommand.setDescription(NEW_DESCRIPTION);
+        RecipeCommand savedRecipeCommand = recipeService.saveRecipeCommand(testRecipeCommand);
+
+        //then
+        assertEquals(NEW_DESCRIPTION, savedRecipeCommand.getDescription());
+        assertEquals(testRecipe.getId().toString(), savedRecipeCommand.getId());
+        assertEquals(testRecipe.getCategories().size(), savedRecipeCommand.getCategories().size());
+        assertEquals(testRecipe.getIngredients().size(), savedRecipeCommand.getIngredients().size());
+    }
 }

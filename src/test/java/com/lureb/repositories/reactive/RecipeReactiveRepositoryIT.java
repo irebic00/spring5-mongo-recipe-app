@@ -1,6 +1,5 @@
 package com.lureb.repositories.reactive;
 
-import com.lureb.model.Category;
 import com.lureb.model.Recipe;
 import org.bson.types.ObjectId;
 import org.junit.Test;

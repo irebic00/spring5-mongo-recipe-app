@@ -45,7 +45,11 @@ public class IngredientServiceImpl implements IngredientService {
                 .switchIfEmpty(Mono.empty())
                 .filter(Objects::nonNull)
                 .flatMap(recipe -> {
-                    UnitOfMeasure uom = unitOfMeasureReactiveRepository.findById(new ObjectId(ingredientCommand.getUom().getId())).block();
+                    UnitOfMeasure uom = unitOfMeasureReactiveRepository
+                            .findById(new ObjectId(ingredientCommand
+                                    .getUom()
+                                    .getId()))
+                            .block();
                     Ingredient ingredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
                     ingredient.getUom().setUom(uom.getUom());
                     recipe.addOrReplaceIngredient(ingredient);
@@ -54,7 +58,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public Mono<IngredientCommand> deleteIngredientById(String recipeId, String ingredientId) {
+    public Mono<Void> deleteIngredientById(String recipeId, String ingredientId) {
         return recipeReactiveRepository.findById(new ObjectId(recipeId))
                 .switchIfEmpty(Mono.empty())
                 .filter(Objects::nonNull)

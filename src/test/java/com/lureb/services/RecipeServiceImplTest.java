@@ -5,6 +5,7 @@ import com.lureb.converter.ModelConverter;
 import com.lureb.exception.NotFoundException;
 import com.lureb.model.Recipe;
 import com.lureb.repositories.RecipeRepository;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -33,40 +34,42 @@ public class RecipeServiceImplTest {
         recipeService = new RecipeServiceImpl(recipeRepository, modelConverter);
     }
 
-//    @Test
-//    public void getRecipeByIdTest() {
-//        Recipe recipe = new Recipe();
-//        recipe.setId("id1");
-//        Optional<Recipe> recipeOptional = Optional.of(recipe);
-//
-//        Mockito.when(recipeRepository.findById(ArgumentMatchers.anyString())).thenReturn(recipeOptional);
-//
-//        Recipe recipeReturned = recipeService.findById("id1");
-//
-//        assertNotNull("Null recipe returned", recipeReturned);
-//        Mockito.verify(recipeRepository, Mockito.times(1)).findById(ArgumentMatchers.anyString());
-//        Mockito.verify(recipeRepository, Mockito.never()).findAll();
-//    }
-//
-//    @Test
-//    public void getRecipeCommandByIdTest() {
-//        Recipe recipe = new Recipe();
-//        recipe.setId("id1");
-//        Optional<Recipe> recipeOptional = Optional.of(recipe);
-//
-//        Mockito.when(recipeRepository.findById(Mockito.anyString())).thenReturn(recipeOptional);
-//
-//        RecipeCommand recipeCommand = new RecipeCommand();
-//        recipeCommand.setId("id1");
-//
-//        Mockito.when(modelConverter.convertValue(Mockito.any(), Mockito.any())).thenReturn(recipeCommand);
-//
-//        RecipeCommand commandById = recipeService.findRecipeCommandById("id1");
-//
-//        assertNotNull("Null recipe returned", commandById);
-//        Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
-//        Mockito.verify(recipeRepository, Mockito.never()).findAll();
-//    }
+    @Test
+    public void getRecipeByIdTest() {
+        Recipe recipe = new Recipe();
+        ObjectId id1 = new ObjectId();
+        recipe.setId(id1);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        Mockito.when(recipeRepository.findById(ArgumentMatchers.anyString())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(id1.toString());
+
+        assertNotNull("Null recipe returned", recipeReturned);
+        Mockito.verify(recipeRepository, Mockito.times(1)).findById(ArgumentMatchers.anyString());
+        Mockito.verify(recipeRepository, Mockito.never()).findAll();
+    }
+
+    @Test
+    public void getRecipeCommandByIdTest() {
+        Recipe recipe = new Recipe();
+        ObjectId id1 = new ObjectId();
+        recipe.setId(id1);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        Mockito.when(recipeRepository.findById(Mockito.anyString())).thenReturn(recipeOptional);
+
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(id1.toString());
+
+        Mockito.when(modelConverter.convertValue(Mockito.any(), Mockito.any())).thenReturn(recipeCommand);
+
+        RecipeCommand commandById = recipeService.findRecipeCommandById(id1.toString());
+
+        assertNotNull("Null recipe returned", commandById);
+        Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
+        Mockito.verify(recipeRepository, Mockito.never()).findAll();
+    }
 
     @Test
     public void getRecipesTest() {

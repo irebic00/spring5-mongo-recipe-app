@@ -39,22 +39,22 @@ public class ImageControllerTest {
                 .build();
     }
 
-//    @Test
-//    public void getImageForm() throws Exception {
-//        //given
-//        RecipeCommand command = new RecipeCommand();
-//        command.setId("id1");
-//
-//        Mockito.when(recipeService.findRecipeCommandById(Mockito.anyString())).thenReturn(command);
-//
-//        //when
-//        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/image"))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.model().attributeExists("recipe"));
-//
-//        Mockito.verify(recipeService, Mockito.times(1)).findRecipeCommandById(Mockito.anyString());
-//
-//    }
+    @Test
+    public void getImageForm() throws Exception {
+        //given
+        RecipeCommand command = new RecipeCommand();
+        command.setId("id1");
+
+        Mockito.when(recipeService.findRecipeCommandById(Mockito.anyString())).thenReturn(command);
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/image"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attributeExists("recipe"));
+
+        Mockito.verify(recipeService, Mockito.times(1)).findRecipeCommandById(Mockito.anyString());
+
+    }
 
     @Test
     public void handleImagePost() throws Exception {
@@ -69,33 +69,33 @@ public class ImageControllerTest {
         Mockito.verify(imageService, Mockito.times(1)).saveImageFile(Mockito.anyString(), Mockito.any());
     }
 
-//    @Test
-//    public void renderImageFromDB() throws Exception {
-//
-//        //given
-//        RecipeCommand command = new RecipeCommand();
-//        command.setId("id1");
-//
-//        String s = "fake image text";
-//        Byte[] bytesBoxed = new Byte[s.getBytes().length];
-//
-//        int i = 0;
-//
-//        for (byte primByte : s.getBytes()){
-//            bytesBoxed[i++] = primByte;
-//        }
-//
-//        command.setImage(bytesBoxed);
-//
-//        Mockito.when(recipeService.findRecipeCommandById(Mockito.anyString())).thenReturn(command);
-//
-//        //when
-//        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/recipeimage"))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andReturn().getResponse();
-//
-//        byte[] reponseBytes = response.getContentAsByteArray();
-//
-//        assertEquals(s.getBytes().length, reponseBytes.length);
-//    }
+    @Test
+    public void renderImageFromDB() throws Exception {
+
+        //given
+        RecipeCommand command = new RecipeCommand();
+        command.setId("id1");
+
+        String s = "fake image text";
+        Byte[] bytesBoxed = new Byte[s.getBytes().length];
+
+        int i = 0;
+
+        for (byte primByte : s.getBytes()){
+            bytesBoxed[i++] = primByte;
+        }
+
+        command.setImage(bytesBoxed);
+
+        Mockito.when(recipeService.findRecipeCommandById(Mockito.anyString())).thenReturn(command);
+
+        //when
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/recipeimage"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn().getResponse();
+
+        byte[] reponseBytes = response.getContentAsByteArray();
+
+        assertEquals(s.getBytes().length, reponseBytes.length);
+    }
 }
