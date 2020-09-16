@@ -1,97 +1,65 @@
 package com.lureb.services;
 
 import com.lureb.commands.IngredientCommand;
-import com.lureb.commands.RecipeCommand;
 import com.lureb.converter.ModelConverter;
-import com.lureb.exception.NotFoundException;
 import com.lureb.model.Ingredient;
 import com.lureb.model.Recipe;
-import com.lureb.repositories.RecipeRepository;
+import com.lureb.model.UnitOfMeasure;
+import com.lureb.repositories.reactive.RecipeReactiveRepository;
+import com.lureb.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 public class IngredientServiceImpl implements IngredientService {
 
-    private final RecipeRepository recipeRepository;
+    private final RecipeReactiveRepository recipeReactiveRepository;
+
+    private final UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     private final ModelConverter modelConverter;
 
-    public IngredientServiceImpl(RecipeRepository recipeRepository, ModelConverter modelConverter) {
-        this.recipeRepository = recipeRepository;
+    public IngredientServiceImpl(RecipeReactiveRepository recipeReactiveRepository, UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository, ModelConverter modelConverter) {
+        this.recipeReactiveRepository = recipeReactiveRepository;
+        this.unitOfMeasureReactiveRepository = unitOfMeasureReactiveRepository;
         this.modelConverter = modelConverter;
     }
 
     @Override
-    public IngredientCommand findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
-        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
-        RecipeCommand recipeCommand = modelConverter.convertValue(recipe.orElse(null), RecipeCommand.class);
-        if (recipeCommand == null) {
-            throw new NotFoundException("Recipe not found!");
-        }
-
-        IngredientCommand ingredientCommand = recipeCommand
-                .getIngredients()
-                .stream()
+    public Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
+        return recipeReactiveRepository
+                .findById(recipeId)
+                .flatMapIterable(Recipe::getIngredients)
                 .filter(ingredient -> ingredient.getId().equals(ingredientId))
-                .collect(Collectors.toList())
-                .get(0);
-        try {
-            ingredientCommand.setRecipeId(recipeId);
-            return ingredientCommand;
-        } catch (NullPointerException exception){
-            throw new NotFoundException("Ingredient not found!");
-        }
+                .single()
+                .map(ingredient -> modelConverter.convertValue(ingredient, IngredientCommand.class));
     }
 
     @Override
-    public IngredientCommand saveIngredientCommand(IngredientCommand ingredientCommand) {
-        Optional<Recipe> recipeOptional = recipeRepository.findById(ingredientCommand.getRecipeId());
-        if (!recipeOptional.isPresent()) {
-            throw new NotFoundException("Recipe not found");
-        }
-        Recipe recipe = recipeOptional.get();
-
-        List<Ingredient> ingredients = recipe.getIngredients();
-        if (ingredients.stream().noneMatch(ingredient -> ingredient.getId().equals(ingredientCommand.getId()))) {
-            Ingredient newIngredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
-            recipe.addIngredient(newIngredient);
-            recipeRepository.save(recipe);
-            ingredientCommand.setId(newIngredient.getId());
-            return ingredientCommand;
-        }
-
-        List<Ingredient> selectedIngredient = ingredients
-                .stream()
-                .filter(i -> i.getId().equals(ingredientCommand.getId()))
-                .collect(Collectors.toList());
-        if (selectedIngredient.isEmpty()) {
-            throw new NotFoundException("Selected ingredient is not found for given ricipe");
-        }
-
-        recipe.getIngredients().remove(selectedIngredient.get(0));
-
-        Ingredient newIngredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
-        recipe.getIngredients().add(newIngredient);
-        recipeRepository.save(recipe);
-
-        return ingredientCommand;
+    public Mono<IngredientCommand> saveIngredientCommand(IngredientCommand ingredientCommand) {
+        return recipeReactiveRepository
+                .findById(ingredientCommand.getRecipeId())
+                .switchIfEmpty(Mono.empty())
+                .filter(Objects::nonNull)
+                .flatMap(recipe -> {
+                    UnitOfMeasure uom = unitOfMeasureReactiveRepository.findById(ingredientCommand.getUom().getId()).block();
+                    Ingredient ingredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
+                    ingredient.getUom().setUom(uom.getUom());
+                    recipe.addOrReplaceIngredient(ingredient);
+                    return recipeReactiveRepository.save(recipe).then(Mono.just(ingredientCommand));
+                });
     }
 
     @Override
-    public void deleteIngredientById(String recipeId, String ingredientId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new NotFoundException("Recipe not found"));
-        Ingredient ingredient = recipe
-                .getIngredients()
-                .stream()
-                .filter(i -> i.getId().equals(ingredientId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Ingredient not found"));
-
-        recipe.getIngredients().remove(ingredient);
-        recipeRepository.save(recipe);
+    public Mono<IngredientCommand> deleteIngredientById(String recipeId, String ingredientId) {
+        return recipeReactiveRepository.findById(recipeId)
+                .switchIfEmpty(Mono.empty())
+                .filter(Objects::nonNull)
+                .flatMap(recipe -> {
+                    recipe.removeIngredient(ingredientId);
+                    return recipeReactiveRepository.save(recipe).then(Mono.empty());
+                });
     }
 }

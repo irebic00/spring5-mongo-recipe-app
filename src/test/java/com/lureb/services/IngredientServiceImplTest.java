@@ -4,12 +4,14 @@ import com.lureb.commands.IngredientCommand;
 import com.lureb.converter.ModelConverter;
 import com.lureb.model.Ingredient;
 import com.lureb.model.Recipe;
-import com.lureb.repositories.RecipeRepository;
+import com.lureb.repositories.reactive.RecipeReactiveRepository;
+import com.lureb.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -18,7 +20,10 @@ import static org.junit.Assert.assertEquals;
 public class IngredientServiceImplTest {
 
     @Mock
-    RecipeRepository recipeRepository;
+    RecipeReactiveRepository recipeReactiveRepository;
+
+    @Mock
+    UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     ModelConverter modelConverter;
 
@@ -28,7 +33,7 @@ public class IngredientServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         modelConverter = new ModelConverter();
-        ingredientService = new IngredientServiceImpl(recipeRepository, modelConverter);
+        ingredientService = new IngredientServiceImpl(recipeReactiveRepository, unitOfMeasureReactiveRepository, modelConverter);
     }
 
     @Test
@@ -55,15 +60,15 @@ public class IngredientServiceImplTest {
         recipe.addIngredient(ingredient3);
         Optional<Recipe> recipeOptional = Optional.of(recipe);
 
-        Mockito.when(recipeRepository.findById(Mockito.anyString())).thenReturn(recipeOptional);
+        Mockito.when(recipeReactiveRepository.findById(Mockito.anyString())).thenReturn(Mono.just(recipe));
 
         //then
-        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("id1", "id3");
+        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("id1", "id3").block();
 
         //when
         assertEquals("id3", ingredientCommand.getId());
         assertEquals("id1", ingredientCommand.getRecipeId());
-        Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
+        Mockito.verify(recipeReactiveRepository, Mockito.times(1)).findById(Mockito.anyString());
     }
 
     @Test
@@ -79,16 +84,16 @@ public class IngredientServiceImplTest {
         savedRecipe.addIngredient(new Ingredient());
         savedRecipe.getIngredients().iterator().next().setId("id3");
 
-        Mockito.when(recipeRepository.findById(Mockito.anyString())).thenReturn(recipeOptional);
-        Mockito.when(recipeRepository.save(Mockito.any())).thenReturn(savedRecipe);
+        Mockito.when(recipeReactiveRepository.findById(Mockito.anyString())).thenReturn(Mono.just(new Recipe()));
+        Mockito.when(recipeReactiveRepository.save(Mockito.any())).thenReturn(Mono.just(savedRecipe));
 
         //when
-        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
+        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
 
         //then
         assertEquals("id3", savedCommand.getId());
-        Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
-        Mockito.verify(recipeRepository, Mockito.times(1)).save(Mockito.any(Recipe.class));
+        Mockito.verify(recipeReactiveRepository, Mockito.times(1)).findById(Mockito.anyString());
+        Mockito.verify(recipeReactiveRepository, Mockito.times(1)).save(Mockito.any(Recipe.class));
 
     }
 
@@ -103,13 +108,13 @@ public class IngredientServiceImplTest {
         savedRecipe.addIngredient(new Ingredient());
         savedRecipe.getIngredients().iterator().next().setId("id3");
 
-        Mockito.when(recipeRepository.findById(Mockito.anyString())).thenReturn(Optional.of(savedRecipe));
+        Mockito.when(recipeReactiveRepository.findById(Mockito.anyString())).thenReturn(Mono.just(savedRecipe));
 
         //when
         ingredientService.deleteIngredientById("id2", "id3");
 
         //then
-        Mockito.verify(recipeRepository, Mockito.times(1)).save(Mockito.any());
-        Mockito.verify(recipeRepository, Mockito.times(1)).findById(Mockito.anyString());
+        Mockito.verify(recipeReactiveRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(recipeReactiveRepository, Mockito.times(1)).findById(Mockito.anyString());
     }
 }

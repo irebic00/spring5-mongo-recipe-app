@@ -1,8 +1,8 @@
 package com.lureb.commands;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -11,10 +11,10 @@ import java.util.UUID;
 @Setter
 public class IngredientCommand {
     private String id;
-    @JsonIgnore
     private String recipeId;
     private String description;
     private BigDecimal amount;
+    @DBRef
     private UnitOfMeasureCommand uom;
 
     public IngredientCommand() {

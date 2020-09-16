@@ -1,11 +1,12 @@
 package com.lureb.services;
 
 import com.lureb.commands.IngredientCommand;
+import reactor.core.publisher.Mono;
 
 public interface IngredientService {
-    IngredientCommand findByRecipeIdAndIngredientId(String recipeId, String ingredientId);
+    Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientId);
 
-    IngredientCommand saveIngredientCommand(IngredientCommand ingredientCommand);
+    Mono<IngredientCommand> saveIngredientCommand(IngredientCommand ingredientCommand);
 
-    void deleteIngredientById(String recipeId, String ingredientId);
+    Mono<IngredientCommand> deleteIngredientById(String recipeId, String ingredientId);
 }

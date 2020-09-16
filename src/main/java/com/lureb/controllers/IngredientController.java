@@ -45,16 +45,16 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredients/{ingredientId}/update")
     public String updateIngredient(@PathVariable String recipeId, @PathVariable String ingredientId, Model model) {
 
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block());
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList().block());
         return "recipe/ingredient/ingredientForm";
     }
 
     @PostMapping("/recipe/{recipeId}/ingredient")
     public String saveOrUpdate(@ModelAttribute IngredientCommand ingredientCommand) {
-        IngredientCommand savedIngredientCommand = ingredientService.saveIngredientCommand(ingredientCommand);
+        ingredientService.saveIngredientCommand(ingredientCommand).block();
 
-        return "redirect:/recipe/" + savedIngredientCommand.getRecipeId() + "/ingredients";
+        return "redirect:/recipe/" + ingredientCommand.getRecipeId() + "/ingredients";
     }
 
     @GetMapping("recipe/{recipeId}/ingredients/new")
@@ -81,7 +81,7 @@ public class IngredientController {
 
     @DeleteMapping("/recipe/{recipeId}/ingredients/{ingredientId}/delete")
     public ResponseEntity<Void> deleteIngredient (@PathVariable String recipeId, @PathVariable String ingredientId) {
-        ingredientService.deleteIngredientById(recipeId, ingredientId);
+        ingredientService.deleteIngredientById(recipeId, ingredientId).block();
         return ResponseEntity.noContent().build();
     }
 }

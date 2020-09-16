@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 
@@ -65,7 +66,7 @@ public class IngredientControllerTest {
         IngredientCommand ingredientCommand = new IngredientCommand();
 
         //when
-        Mockito.when(ingredientService.findByRecipeIdAndIngredientId(Mockito.anyString(), Mockito.anyString())).thenReturn(ingredientCommand);
+        Mockito.when(ingredientService.findByRecipeIdAndIngredientId(Mockito.anyString(), Mockito.anyString())).thenReturn(Mono.just(ingredientCommand));
 
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/recipe/1/ingredients/2/show"))
@@ -80,7 +81,7 @@ public class IngredientControllerTest {
         IngredientCommand ingredientCommand = new IngredientCommand();
 
         //when
-        Mockito.when(ingredientService.findByRecipeIdAndIngredientId(Mockito.anyString(), Mockito.anyString())).thenReturn(ingredientCommand);
+        Mockito.when(ingredientService.findByRecipeIdAndIngredientId(Mockito.anyString(), Mockito.anyString())).thenReturn(Mono.just(ingredientCommand));
         Mockito.when(unitOfMeasureService.listAllUoms()).thenReturn(Flux.just(new UnitOfMeasureCommand()));
 
         //then
@@ -99,7 +100,7 @@ public class IngredientControllerTest {
         command.setRecipeId("id2");
 
         //when
-        Mockito.when(ingredientService.saveIngredientCommand(Mockito.any())).thenReturn(command);
+        Mockito.when(ingredientService.saveIngredientCommand(Mockito.any())).thenReturn(Mono.just(command));
 
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/recipe/id2/ingredient")

@@ -3,7 +3,7 @@ package com.lureb.bootstrap;
 import com.lureb.model.*;
 import com.lureb.repositories.CategoryRepository;
 import com.lureb.repositories.RecipeRepository;
-import com.lureb.repositories.UnitOfMeasureRepository;
+import com.lureb.repositories.reactive.UnitOfMeasureReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
@@ -21,13 +21,13 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private final CategoryRepository categoryRepository;
     private final RecipeRepository recipeRepository;
-    private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     public DataLoader(CategoryRepository categoryRepository, RecipeRepository recipeRepository,
-                      UnitOfMeasureRepository unitOfMeasureRepository) {
+                      UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository) {
         this.categoryRepository = categoryRepository;
         this.recipeRepository = recipeRepository;
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
+        this.unitOfMeasureReactiveRepository = unitOfMeasureReactiveRepository;
     }
 
     private List<Recipe> bootstrappedData() {
@@ -44,7 +44,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
         Ingredient ingredient1 = new Ingredient();
         ingredient1.setAmount(BigDecimal.valueOf(1));
-        ingredient1.setUom(unitOfMeasureRepository.findByUom("Tablespoon").orElse(null));
+        ingredient1.setUom(unitOfMeasureReactiveRepository.findByUom("Tablespoon").block());
         ingredient1.setDescription("clean guacamole");
 
         Recipe perfectGuacamole = new Recipe();
@@ -61,12 +61,13 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         perfectGuacamole.setUrl("http://www.coolinarika.hr");
         perfectGuacamole.setNotes(perfectGuacamoleNotes);
         perfectGuacamole.addIngredient(ingredient1);
+        ingredient1.setRecipeId(perfectGuacamole.getId());
         log.info("Saved recipe: {}", perfectGuacamole);
 
 
         Ingredient ingredient2 = new Ingredient();
         ingredient2.setAmount(BigDecimal.valueOf(1));
-        ingredient2.setUom(unitOfMeasureRepository.findByUom("Tablespoon").orElse(null));
+        ingredient2.setUom(unitOfMeasureReactiveRepository.findByUom("Tablespoon").block());
         ingredient2.setDescription("clean chicken");
 
         Notes spicyGrilledChickenTacosNotes = new Notes();
@@ -85,6 +86,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         spicyGrilledChickenTacos.setUrl("http://www.coolinarika.hr");
         spicyGrilledChickenTacos.setNotes(spicyGrilledChickenTacosNotes);
         spicyGrilledChickenTacos.addIngredient(ingredient2);
+        ingredient2.setRecipeId(spicyGrilledChickenTacos.getId());
         log.info("Saved recipe: {}", spicyGrilledChickenTacos);
 
         recipes.add(perfectGuacamole);
@@ -113,35 +115,35 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
     private void loadUom(){
         UnitOfMeasure uom1 = new UnitOfMeasure();
         uom1.setUom("Teaspoon");
-        unitOfMeasureRepository.save(uom1);
+        unitOfMeasureReactiveRepository.save(uom1).block();
 
         UnitOfMeasure uom2 = new UnitOfMeasure();
         uom2.setUom("Tablespoon");
-        unitOfMeasureRepository.save(uom2);
+        unitOfMeasureReactiveRepository.save(uom2).block();
 
         UnitOfMeasure uom3 = new UnitOfMeasure();
         uom3.setUom("Cup");
-        unitOfMeasureRepository.save(uom3);
+        unitOfMeasureReactiveRepository.save(uom3).block();
 
         UnitOfMeasure uom4 = new UnitOfMeasure();
         uom4.setUom("Pinch");
-        unitOfMeasureRepository.save(uom4);
+        unitOfMeasureReactiveRepository.save(uom4).block();
 
         UnitOfMeasure uom5 = new UnitOfMeasure();
         uom5.setUom("Ounce");
-        unitOfMeasureRepository.save(uom5);
+        unitOfMeasureReactiveRepository.save(uom5).block();
 
         UnitOfMeasure uom6 = new UnitOfMeasure();
         uom6.setUom("Each");
-        unitOfMeasureRepository.save(uom6);
+        unitOfMeasureReactiveRepository.save(uom6).block();
 
         UnitOfMeasure uom7 = new UnitOfMeasure();
         uom7.setUom("Pint");
-        unitOfMeasureRepository.save(uom7);
+        unitOfMeasureReactiveRepository.save(uom7).block();
 
         UnitOfMeasure uom8 = new UnitOfMeasure();
         uom8.setUom("Dash");
-        unitOfMeasureRepository.save(uom8);
+        unitOfMeasureReactiveRepository.save(uom8).block();
     }
 
     @Override
