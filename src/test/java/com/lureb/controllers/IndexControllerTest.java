@@ -2,6 +2,7 @@ package com.lureb.controllers;
 
 import com.lureb.model.Recipe;
 import com.lureb.services.RecipeService;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -48,8 +49,8 @@ public class IndexControllerTest {
 
         // Given
         Set<Recipe> recipes = new HashSet<>();
-        recipes.add(Recipe.builder().id("id1").build());
-        recipes.add(Recipe.builder().id("id2").build());
+        recipes.add(Recipe.builder().id(new ObjectId()).build());
+        recipes.add(Recipe.builder().id(new ObjectId()).build());
 
         Mockito.when(recipeService.getRecipes()).thenReturn(recipes);
         ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);

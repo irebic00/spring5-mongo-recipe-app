@@ -3,11 +3,9 @@ package com.lureb.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.UUID;
 
 
 @Data
@@ -17,11 +15,15 @@ import java.util.UUID;
 public class Notes {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    private ObjectId id;
 
-    @DBRef
     private Recipe recipe;
 
     private String recipeNotes;
 
+    public Notes() {
+        if (id == null) {
+            id  = new ObjectId();
+        }
+    }
 }

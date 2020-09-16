@@ -13,5 +13,5 @@ import java.util.List;
 public class CategoryCommand {
     private String id;
     private String description;
-    private List<RecipeCommand> recipes = new ArrayList<>();
+    private List<String> recipeIds = new ArrayList<>();
 }

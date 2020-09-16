@@ -1,5 +1,6 @@
 package com.lureb.model;
 
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class CategoryTest {
 
     @Test
     public void getId() {
-        String expectedId = "id1";
+        ObjectId expectedId = new ObjectId();
         category.setId(expectedId);
         assertEquals(expectedId, category.getId());
     }

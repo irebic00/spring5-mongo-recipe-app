@@ -1,27 +1,30 @@
 package com.lureb.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
-@EqualsAndHashCode(exclude = {"recipes"})
 @Document
 public class Category {
 
     @Id
-    private String id;
+    private ObjectId id;
     private String description;
-    private List<Recipe> recipes = new ArrayList<>();
+    private Set<ObjectId> recipeIds = new HashSet<>();
+
+    public Category() {
+        if (id ==null) {
+            id = new ObjectId();
+        }
+    }
 
     public void addRecipe(Recipe recipe) {
-        if (recipes.stream().anyMatch(recipeSaved -> recipeSaved.equals(recipe))) {
-            recipes.add(recipe);
-        }
+        recipeIds.add(recipe.getId());
     }
 
     @Override

@@ -60,7 +60,7 @@ public class RecipeController {
         }
         RecipeCommand savedRecipeCommand = recipeService.saveRecipeCommand(recipeCommand);
 
-        return "redirect:/recipe/" + savedRecipeCommand.getId() + "/show";
+        return "redirect:/recipe/" + savedRecipeCommand.getId().toString() + "/show";
     }
 
     @DeleteMapping("/recipe/{id}/delete")

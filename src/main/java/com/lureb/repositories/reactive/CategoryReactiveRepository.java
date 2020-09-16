@@ -1,13 +1,11 @@
 package com.lureb.repositories.reactive;
 
 import com.lureb.model.Category;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-public interface CategoryReactiveRepository extends ReactiveMongoRepository<Category, String> {
+public interface CategoryReactiveRepository extends ReactiveMongoRepository<Category, ObjectId> {
 
     Mono<Category> findByDescription(String description);
 }

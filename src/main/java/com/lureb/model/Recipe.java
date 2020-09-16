@@ -3,24 +3,23 @@ package com.lureb.model;
 import com.lureb.exception.NotFoundException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Document
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString(exclude = {"image"})
 @Slf4j
 public class Recipe {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    private ObjectId id;
 
     private String description;
     private Integer prepTime;
@@ -34,6 +33,12 @@ public class Recipe {
     private Byte[] image;
     private List<Category> categories = new ArrayList<>();
     private Notes notes;
+
+    public Recipe() {
+        if (id == null) {
+            id  = new ObjectId();
+        }
+    }
 
     public Recipe addIngredient(Ingredient ingredient) {
         this.getIngredients().add(ingredient);
@@ -57,14 +62,14 @@ public class Recipe {
     public void removeIngredient(String ingredientId) {
         ingredients.remove(ingredients
                 .stream()
-                .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                .filter(ingredient -> ingredient.getId().toString().equals(ingredientId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Ingredient not found with id=" + ingredientId)));
     }
 
     public void addOrReplaceIngredient(Ingredient ingredient) {
         try {
-            removeIngredient(ingredient.getId());
+            removeIngredient(ingredient.getId().toString());
         } catch (NotFoundException ex) {
             log.info("Ingredient not found, will add it!");
         }

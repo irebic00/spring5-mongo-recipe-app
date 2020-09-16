@@ -6,6 +6,7 @@ import com.lureb.exception.NotFoundException;
 import com.lureb.model.Recipe;
 import com.lureb.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -47,7 +48,8 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public RecipeCommand findRecipeCommandById(String id) {
         Recipe recipe = recipeRepository.findById(id).orElse(null);
-        return modelConverter.convertValue(recipe, RecipeCommand.class);
+        RecipeCommand recipeCommand = modelConverter.convertValue(recipe, RecipeCommand.class);
+        return recipeCommand;
     }
 
     @Override

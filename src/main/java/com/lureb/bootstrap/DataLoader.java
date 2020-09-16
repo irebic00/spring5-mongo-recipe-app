@@ -61,7 +61,6 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         perfectGuacamole.setUrl("http://www.coolinarika.hr");
         perfectGuacamole.setNotes(perfectGuacamoleNotes);
         perfectGuacamole.addIngredient(ingredient1);
-        ingredient1.setRecipeId(perfectGuacamole.getId());
         log.info("Saved recipe: {}", perfectGuacamole);
 
 
@@ -86,7 +85,6 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         spicyGrilledChickenTacos.setUrl("http://www.coolinarika.hr");
         spicyGrilledChickenTacos.setNotes(spicyGrilledChickenTacosNotes);
         spicyGrilledChickenTacos.addIngredient(ingredient2);
-        ingredient2.setRecipeId(spicyGrilledChickenTacos.getId());
         log.info("Saved recipe: {}", spicyGrilledChickenTacos);
 
         recipes.add(perfectGuacamole);

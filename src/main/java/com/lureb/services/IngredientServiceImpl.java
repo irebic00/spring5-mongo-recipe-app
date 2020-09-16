@@ -7,6 +7,7 @@ import com.lureb.model.Recipe;
 import com.lureb.model.UnitOfMeasure;
 import com.lureb.repositories.reactive.RecipeReactiveRepository;
 import com.lureb.repositories.reactive.UnitOfMeasureReactiveRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -30,9 +31,9 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
         return recipeReactiveRepository
-                .findById(recipeId)
+                .findById(new ObjectId(recipeId))
                 .flatMapIterable(Recipe::getIngredients)
-                .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                .filter(ingredient -> ingredient.getId().toString().equals(ingredientId))
                 .single()
                 .map(ingredient -> modelConverter.convertValue(ingredient, IngredientCommand.class));
     }
@@ -40,11 +41,11 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Mono<IngredientCommand> saveIngredientCommand(IngredientCommand ingredientCommand) {
         return recipeReactiveRepository
-                .findById(ingredientCommand.getRecipeId())
+                .findById(new ObjectId(ingredientCommand.getRecipeId()))
                 .switchIfEmpty(Mono.empty())
                 .filter(Objects::nonNull)
                 .flatMap(recipe -> {
-                    UnitOfMeasure uom = unitOfMeasureReactiveRepository.findById(ingredientCommand.getUom().getId()).block();
+                    UnitOfMeasure uom = unitOfMeasureReactiveRepository.findById(new ObjectId(ingredientCommand.getUom().getId())).block();
                     Ingredient ingredient = modelConverter.convertValue(ingredientCommand, Ingredient.class);
                     ingredient.getUom().setUom(uom.getUom());
                     recipe.addOrReplaceIngredient(ingredient);
@@ -54,7 +55,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Mono<IngredientCommand> deleteIngredientById(String recipeId, String ingredientId) {
-        return recipeReactiveRepository.findById(recipeId)
+        return recipeReactiveRepository.findById(new ObjectId(recipeId))
                 .switchIfEmpty(Mono.empty())
                 .filter(Objects::nonNull)
                 .flatMap(recipe -> {

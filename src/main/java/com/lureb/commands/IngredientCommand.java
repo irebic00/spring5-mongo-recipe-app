@@ -2,15 +2,15 @@ package com.lureb.commands;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Getter
 @Setter
 public class IngredientCommand {
-    private String id;
+    private ObjectId id;
     private String recipeId;
     private String description;
     private BigDecimal amount;
@@ -19,7 +19,7 @@ public class IngredientCommand {
 
     public IngredientCommand() {
         if (id == null){
-            id = UUID.randomUUID().toString();
+            id = new ObjectId();
         }
     }
 }

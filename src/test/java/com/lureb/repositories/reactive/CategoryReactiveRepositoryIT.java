@@ -1,6 +1,7 @@
 package com.lureb.repositories.reactive;
 
 import com.lureb.model.Category;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,12 @@ public class CategoryReactiveRepositoryIT {
     @DirtiesContext // if we mess up db
     public void provisionAndFindCategory() {
         Category category = new Category();
-        category.setId("id1");
+        ObjectId id = new ObjectId();
+        category.setId(id);
         category.setDescription("test");
         categoryReactiveRepository.save(category).block();
 
 
-        assertEquals("test", categoryReactiveRepository.findById("id1").block().getDescription());
+        assertEquals("test", categoryReactiveRepository.findById(id).block().getDescription());
     }
 }

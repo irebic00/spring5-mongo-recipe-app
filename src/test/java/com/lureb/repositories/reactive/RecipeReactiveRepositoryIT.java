@@ -2,6 +2,7 @@ package com.lureb.repositories.reactive;
 
 import com.lureb.model.Category;
 import com.lureb.model.Recipe;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,12 @@ public class RecipeReactiveRepositoryIT {
     @DirtiesContext // if we mess up db
     public void provisionAndFindCategory() {
         Recipe recipe = new Recipe();
-        recipe.setId("id1");
+        ObjectId id = new ObjectId();
+        recipe.setId(id);
         recipe.setDescription("test");
         recipeReactiveRepository.save(recipe).block();
 
 
-        assertEquals("test", recipeReactiveRepository.findById("id1").block().getDescription());
+        assertEquals("test", recipeReactiveRepository.findById(id).block().getDescription());
     }
 }

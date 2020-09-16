@@ -2,10 +2,9 @@ package com.lureb.model;
 
 import lombok.Data;
 import lombok.ToString;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.UUID;
 
 @Data
 @ToString
@@ -13,7 +12,12 @@ import java.util.UUID;
 public class UnitOfMeasure {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    private ObjectId id;
     private String uom;
 
+    public UnitOfMeasure() {
+        if (id == null) {
+            id  = new ObjectId();
+        }
+    }
 }

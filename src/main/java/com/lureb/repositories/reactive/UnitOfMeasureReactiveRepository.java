@@ -1,13 +1,11 @@
 package com.lureb.repositories.reactive;
 
 import com.lureb.model.UnitOfMeasure;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-public interface UnitOfMeasureReactiveRepository extends ReactiveMongoRepository<UnitOfMeasure, String> {
+public interface UnitOfMeasureReactiveRepository extends ReactiveMongoRepository<UnitOfMeasure, ObjectId> {
 
     Mono<UnitOfMeasure> findByUom(String uom);
 }
